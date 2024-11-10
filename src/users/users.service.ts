@@ -13,16 +13,11 @@ export class UsersService {
     const createdUser = new this.userModel(createUserDto);
     return createdUser.save();
   }
-  // create(createUserDto: CreateUserDto) {
-  //   return 'This action adds a new user';
-  // }
 
-  findAll() {
-    return `This action returns all users`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  //auth is using this to find the users
+  async findByUsername(username: string): Promise<User | undefined> {
+    const user = await this.userModel.findOne({ username }).exec();
+    return user || undefined;
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {
