@@ -9,14 +9,24 @@ import { User } from './schemas/user.schema';
 export class UsersService {
   constructor(@InjectModel(User.name) private userModel: Model<User>) {}
 
-  async create(createUserDto: CreateUserDto): Promise<User> {
-    const createdUser = new this.userModel(createUserDto);
-    return createdUser.save();
+  async create(createUserDto: CreateUserDto): Promise<User | null> {
+    try {
+      const createdUser = new this.userModel(createUserDto);
+      return createdUser.save();
+    } catch (error) {
+      console.log('Error creating user', error);
+      return null;
+    }
   }
 
   //auth is using this to find the users
   async findByUsername(username: string): Promise<User | undefined> {
     const user = await this.userModel.findOne({ username }).exec();
+    return user || undefined;
+  }
+
+  async findByEmail(email: string): Promise<User | undefined> {
+    const user = await this.userModel.findOne({ email }).exec();
     return user || undefined;
   }
 
