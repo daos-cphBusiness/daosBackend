@@ -40,7 +40,7 @@ export class AuthService {
     if (uniqueEmailCheck || uniqueUsernameCheck) {
       throw new Error('Email or Username is already taken');
     } else {
-      const user = this.usersService.create(createUserDto);
+      const user = this.usersService.createUser(createUserDto);
       if (!user) {
         console.log('User could not be created');
       }
