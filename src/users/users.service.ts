@@ -85,4 +85,9 @@ export class UsersService {
       console.log('Error deleting the user', error);
     }
   }
+
+  //function created for e2e test
+  async deleteMany() {
+    return this.userModel.deleteMany({}).exec();
+  }
 }
