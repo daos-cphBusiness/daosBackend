@@ -58,8 +58,8 @@ describe('AuthController (e2e)', () => {
 
     it('should not sign up an invalid user', async () => {
       const invalidUser: CreateUserDto = {
-        username: 'tt', // Invalid username (too short)
-        password: 'pp', // Invalid password (too short)
+        username: 'tt',
+        password: 'pp',
         email: 'test@test.com',
       };
 
