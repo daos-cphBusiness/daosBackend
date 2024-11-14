@@ -36,34 +36,34 @@ jobs:
           MONGO_URL: mongodb://localhost:27017/test
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
 
-- name: Create Pull Request to master
-  if: ${{ success() }}
-  uses: actions/github-script@v6
-  with:
-    script: |
-      const owner = context.repo.owner;
-      const repo = context.repo.repo;
+      - name: Create Pull Request to master
+        if: ${{ success() }}
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
 
-      // Check if there is already an open PR from dev to master
-      const pullRequests = await github.rest.pulls.list({
-        owner: owner,
-        repo: repo,
-        head: "dev",
-        base: "master",
-        state: "open",
-      });
+            // Check if there is already an open PR from dev to master
+            const pullRequests = await github.rest.pulls.list({
+              owner: owner,
+              repo: repo,
+              head: "dev",
+              base: "master",
+              state: "open",
+            });
 
-      if (pullRequests.data.length === 0) {
-        // Create a new pull request
-        await github.rest.pulls.create({
-          owner: owner,
-          repo: repo,
-          title: "Auto PR: Merge dev into master",
-          head: "dev",
-          base: "master",
-          body: "This PR was automatically created by GitHub Actions upon passing tests in the dev branch.",
-        });
-      } else {
-        console.log("An open pull request from dev to master already exists.");
-      }
+            if (pullRequests.data.length === 0) {
+              // Create a new pull request
+              await github.rest.pulls.create({
+                owner: owner,
+                repo: repo,
+                title: "Auto PR: Merge dev into master",
+                head: "dev",
+                base: "master",
+                body: "This PR was automatically created by GitHub Actions upon passing tests in the dev branch.",
+              });
+            } else {
+              console.log("An open pull request from dev to master already exists.");
+            }
 
