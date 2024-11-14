@@ -35,3 +35,29 @@ jobs:
         env:
           MONGO_URL: mongodb://localhost:27017/test
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
+
+      - name: Create Pull Request to master
+        if: ${{ success() }}
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const { data: pullRequests } = await github.pulls.list({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              head: "dev",
+              base: "master",
+              state: "open",
+            });
+
+            if (pullRequests.length === 0) {
+              await github.pulls.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: "Auto PR: Merge dev into master",
+                head: "dev",
+                base: "master",
+                body: "This PR was automatically created by GitHub Actions upon passing tests in the dev branch.",
+              });
+            } else {
+              console.log("An open pull request from dev to master already exists.");
+            }
