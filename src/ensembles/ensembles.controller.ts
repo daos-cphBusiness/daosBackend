@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 import { EnsemblesService } from './ensembles.service';
 import { CreateEnsembleDto } from './dto/create-ensemble.dto';
-import { linkUserToEnsembleDto } from '../../src/users/dto/link-user-to-ensemble.dto';
+import { linkUserToEnsembleDto } from '../users/dto/link-user-to-ensemble.dto';
 
 @Controller('ensembles')
 export class EnsemblesController {
