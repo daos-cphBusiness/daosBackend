@@ -3,7 +3,7 @@ import { EnsemblesService } from './ensembles.service';
 import { EnsemblesController } from './ensembles.controller';
 import { Ensemble, EnsembleSchema } from './schemas/ensemble.schema';
 import { MongooseModule } from '@nestjs/mongoose';
-import { UsersModule } from 'src/users/users.module';
+import { UsersModule } from '../users/users.module';
 
 @Module({
   imports: [

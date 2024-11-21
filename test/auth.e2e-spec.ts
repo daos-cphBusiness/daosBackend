@@ -43,9 +43,9 @@ describe('AuthController (e2e)', () => {
   describe('/auth/signUp', () => {
     it('should sign up a valid user', async () => {
       const validUser: CreateUserDto = {
-        username: 'testuser',
+        username: 'gooduser',
         password: 'password',
-        email: 'testuser@test.com',
+        email: 'gooduser@test.com',
       };
 
       const { body } = await request(app.getHttpServer())
