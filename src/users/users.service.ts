@@ -90,4 +90,18 @@ export class UsersService {
   async deleteMany() {
     return this.userModel.deleteMany({}).exec();
   }
+
+  //i dont remember why i created this function
+
+  async getUserIdByUsername(username: string): Promise<string | null> {
+    try {
+      const user = await this.userModel
+        .findOne({ username })
+        .select('_id')
+        .exec();
+      return user ? user._id.toString() : null; // Convert ObjectId to string
+    } catch (error) {
+      console.log('Error getting Id by username', error);
+    }
+  }
 }
