@@ -4,8 +4,8 @@ import { Ensemble, EnsembleDocument } from './schemas/ensemble.schema';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { linkUserToEnsembleDto } from 'src/users/dto/link-user-to-ensemble.dto';
-import { UsersService } from '../../src/users/users.service';
-import { User } from '../../src/users/schemas/user.schema';
+import { UsersService } from '../users/users.service';
+import { User } from '../users/schemas/user.schema';
 
 @Injectable()
 export class EnsemblesService {
