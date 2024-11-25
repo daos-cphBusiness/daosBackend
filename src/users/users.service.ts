@@ -140,7 +140,7 @@ export class UsersService {
     return this.userModel.deleteMany({}).exec();
   }
 
-  //i dont remember why i created this function
+  //i really dont remember why i created this function
 
   async getUserIdByUsername(username: string): Promise<string | null> {
     try {
