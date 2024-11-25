@@ -10,6 +10,7 @@ import {
   UseGuards,
   InternalServerErrorException,
   ConflictException,
+  NotFoundException,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -47,6 +48,8 @@ export class UsersController {
       return await this.usersService.updateUser(username, updateUserDto);
     } catch (error) {
       if (error instanceof ConflictException) {
+        throw error;
+      } else if (error instanceof NotFoundException) {
         throw error;
       } else {
         throw new InternalServerErrorException(

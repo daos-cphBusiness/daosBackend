@@ -12,5 +12,5 @@ export class CreateUserDto {
 
   @IsNotEmpty({ message: 'Field Required ' })
   @MinLength(6, { message: 'Password must be at least 6 characters long' })
-  readonly password: string;
+  password: string;
 }
