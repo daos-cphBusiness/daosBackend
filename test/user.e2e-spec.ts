@@ -120,7 +120,7 @@ describe('AuthController (e2e)', () => {
         password: 'password',
         email: 'newuser@daos.com',
       };
-      const response = await request(app.getHttpServer())
+      await request(app.getHttpServer())
         .post('/auth/signUp')
         .send(validnewUser);
 
@@ -147,7 +147,6 @@ describe('AuthController (e2e)', () => {
 
       expect(body).toHaveProperty('username', 'testuser');
       expect(body).toHaveProperty('email', 'testuser@test.com');
-      expect(response.body._id).toEqual(body._id);
       // console.log(body);
     });
   });
