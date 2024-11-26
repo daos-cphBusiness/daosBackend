@@ -1,8 +1,10 @@
-import { IsNotEmpty } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class CreateEnsembleDto {
-  @IsNotEmpty()
+  @IsString({ message: 'Name should only contain letters' })
+  @IsNotEmpty({ message: 'Ensemble name required ' })
   name: string;
 
+  @IsOptional()
   description: string;
 }

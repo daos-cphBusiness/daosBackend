@@ -47,7 +47,6 @@ export class EnsemblesController {
     return this.ensemblesService.update(id, updateEnsembleDto);
   }
 
-
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.ensemblesService.remove(id);

@@ -1,4 +1,8 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateEnsembleDto } from './dto/create-ensemble.dto';
 import { UpdateEnsembleDto } from './dto/update-ensemble.dto';
 import { Ensemble, EnsembleDocument } from './schemas/ensemble.schema';
@@ -35,6 +39,7 @@ export class EnsemblesService {
       if (nameCheck) {
         throw new ConflictException('Group name already taken');
       } else {
+        console.log('here', createEnsembleDto.description);
         const createdEnsemble = await new this.ensembleModel(createEnsembleDto);
         return createdEnsemble.save();
       }
@@ -67,7 +72,10 @@ export class EnsemblesService {
     return emsemble;
   }
 
-  async update(id: string, updateEnsembleDto: UpdateEnsembleDto): Promise<Ensemble> {
+  async update(
+    id: string,
+    updateEnsembleDto: UpdateEnsembleDto,
+  ): Promise<Ensemble> {
     const existingEnsemble = await this.ensembleModel.findById(id);
 
     if (!existingEnsemble) {
@@ -84,12 +92,12 @@ export class EnsemblesService {
     try {
       // Attempt to find and delete the ensemble by ID
       const result = await this.ensembleModel.findByIdAndDelete(id);
-  
       if (!result) {
         throw new NotFoundException(`Ensemble with id ${id} not found`);
       }
-  
-      return { message: `Ensemble with id ${id} has been successfully deleted` };
+      return {
+        message: `Ensemble with id ${id} has been successfully deleted`,
+      };
     } catch (error) {
       // Log and rethrow the error
       console.error('Error deleting ensemble:', error);
