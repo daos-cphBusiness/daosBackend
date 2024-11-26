@@ -11,7 +11,7 @@ import { EnsemblesModule } from './ensembles/ensembles.module';
     MongooseModule.forRoot('mongodb://localhost/test-daos'),
     UsersModule,
     AuthModule,
-    EnsemblesModule
+    EnsemblesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

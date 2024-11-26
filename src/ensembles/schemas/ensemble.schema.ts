@@ -8,7 +8,7 @@ export type EnsembleDocument = HydratedDocument<Ensemble>;
 export class Ensemble {
   @Prop({ required: true })
   name: string;
-  @Prop({ required: true })
+  @Prop()
   description: string;
   @Prop({
     type: [{ type: mongoose.Schema.Types.ObjectId, ref: User.name }],
