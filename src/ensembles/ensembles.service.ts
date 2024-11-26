@@ -1,5 +1,6 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateEnsembleDto } from './dto/create-ensemble.dto';
+import { UpdateEnsembleDto } from './dto/update-ensemble.dto';
 import { Ensemble, EnsembleDocument } from './schemas/ensemble.schema';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
@@ -56,15 +57,48 @@ export class EnsemblesService {
     return this.ensembleModel.find().populate('users');
   }
 
-  findOne(id: number) {
-    return this.ensembleModel.findById(id).populate('users');
+  async findOne(id: string) {
+    const emsemble = await this.ensembleModel.findById(id).populate('users');
+    console.log(emsemble);
+    if (!emsemble) {
+      throw new NotFoundException(`Ensemble with ID ${id} not found`);
+    }
+
+    return emsemble;
   }
 
-  // update(id: number, updateEnsembleDto: UpdateEnsembleDto) {
-  //   return `This action updates a #${id} ensemble`;
-  // }
+  async update(id: string, updateEnsembleDto: UpdateEnsembleDto): Promise<Ensemble> {
+    const existingEnsemble = await this.ensembleModel.findById(id);
 
-  remove(id: number) {
-    return `This action removes a #${id} ensemble`;
+    if (!existingEnsemble) {
+      throw new NotFoundException(`Ensemble with ID ${id} not found`);
+    }
+
+    // Merge existing data with the new updates
+    Object.assign(existingEnsemble, updateEnsembleDto);
+
+    return existingEnsemble.save();
+  }
+
+  async remove(id: string): Promise<{ message: string }> {
+    try {
+      // Attempt to find and delete the ensemble by ID
+      const result = await this.ensembleModel.findByIdAndDelete(id);
+  
+      if (!result) {
+        throw new NotFoundException(`Ensemble with id ${id} not found`);
+      }
+  
+      return { message: `Ensemble with id ${id} has been successfully deleted` };
+    } catch (error) {
+      // Log and rethrow the error
+      console.error('Error deleting ensemble:', error);
+      throw error;
+    }
+  }
+
+  //function for testing purposes
+  async deleteMany(): Promise<void> {
+    await this.ensembleModel.deleteMany();
   }
 }
