@@ -116,9 +116,9 @@ describe('AuthController (e2e)', () => {
   describe('users/newuser', () => {
     it('should update an logged in exisitng user when provided valid credentials', async () => {
       const validnewUser: CreateUserDto = {
-        username: 'newuser',
+        username: 'firstuser',
         password: 'password',
-        email: 'newuser@daos.com',
+        email: 'firstuser@daos.com',
       };
       await request(app.getHttpServer())
         .post('/auth/signUp')
@@ -127,26 +127,26 @@ describe('AuthController (e2e)', () => {
       const loginResponse = await request(app.getHttpServer())
         .post('/auth/login')
         .send({
-          username: 'newuser',
+          username: 'firstuser',
           password: 'password',
         });
 
       const authToken = loginResponse.body.access_token;
 
       const validUser: UpdateUserDto = {
-        username: 'testuser',
+        username: 'seconduser',
         password: 'password',
-        email: 'testuser@test.com',
+        email: 'seconduser@test.com',
       };
 
       const { body } = await request(app.getHttpServer())
-        .patch('/users/newuser')
+        .patch('/users/firstuser')
         .set('Authorization', `Bearer ${authToken}`)
         .send(validUser)
         .expect(200);
 
-      expect(body).toHaveProperty('username', 'testuser');
-      expect(body).toHaveProperty('email', 'testuser@test.com');
+      expect(body).toHaveProperty('username', 'seconduser');
+      expect(body).toHaveProperty('email', 'seconduser@test.com');
       // console.log(body);
     });
   });

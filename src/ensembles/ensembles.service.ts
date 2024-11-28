@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
   NotFoundException,
@@ -8,7 +9,6 @@ import { UpdateEnsembleDto } from './dto/update-ensemble.dto';
 import { Ensemble, EnsembleDocument } from './schemas/ensemble.schema';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-import { linkUserToEnsembleDto } from 'src/users/dto/link-user-to-ensemble.dto';
 import { UsersService } from '../users/users.service';
 import { User } from '../users/schemas/user.schema';
 
@@ -19,12 +19,17 @@ export class EnsemblesService {
     private readonly userService: UsersService,
   ) {}
 
-  async linkUsersToEnsemble(id: string, linkUserDto: linkUserToEnsembleDto) {
+  async linkUsersToEnsemble(id: string, username: string) {
     try {
       const ensemble: EnsembleDocument = await this.ensembleModel.findById(id);
-      const user: User = await this.userService.findByUsername(
-        linkUserDto.username,
-      );
+      const user: User = await this.userService.findByUsername(username);
+      const UserIds = ensemble.users;
+      for (const UserId of UserIds) {
+        const foundUsername = await this.userService.getUsernameById(UserId);
+        if (username === foundUsername) {
+          throw new BadRequestException('User already exists in the ensemble.');
+        }
+      }
       ensemble.users.push(user);
       return ensemble.save();
     } catch (error) {
@@ -39,7 +44,6 @@ export class EnsemblesService {
       if (nameCheck) {
         throw new ConflictException('Group name already taken');
       } else {
-        console.log('here', createEnsembleDto.description);
         const createdEnsemble = await new this.ensembleModel(createEnsembleDto);
         return createdEnsemble.save();
       }
@@ -64,7 +68,6 @@ export class EnsemblesService {
 
   async findOne(id: string) {
     const emsemble = await this.ensembleModel.findById(id).populate('users');
-    console.log(emsemble);
     if (!emsemble) {
       throw new NotFoundException(`Ensemble with ID ${id} not found`);
     }

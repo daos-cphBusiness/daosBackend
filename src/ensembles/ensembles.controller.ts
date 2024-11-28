@@ -6,22 +6,22 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
+  Req,
 } from '@nestjs/common';
 import { EnsemblesService } from './ensembles.service';
 import { CreateEnsembleDto } from './dto/create-ensemble.dto';
 import { UpdateEnsembleDto } from './dto/update-ensemble.dto';
-import { linkUserToEnsembleDto } from '../users/dto/link-user-to-ensemble.dto';
+import { AuthGuard } from '../auth/auth.guard';
 
 @Controller('ensembles')
 export class EnsemblesController {
   constructor(private readonly ensemblesService: EnsemblesService) {}
 
+  @UseGuards(AuthGuard)
   @Post('/:id/users')
-  linkEnsembles(
-    @Param('id') id: string,
-    @Body() linkUserDto: linkUserToEnsembleDto,
-  ) {
-    return this.ensemblesService.linkUsersToEnsemble(id, linkUserDto);
+  linkEnsembles(@Param('id') id: string, @Req() req) {
+    return this.ensemblesService.linkUsersToEnsemble(id, req.user.username);
   }
 
   @Post()

@@ -139,6 +139,20 @@ export class UsersService {
   async deleteMany() {
     return this.userModel.deleteMany({}).exec();
   }
+  async getUsernameById(userId: User): Promise<string | null> {
+    try {
+      const user = await this.userModel
+        .findById(userId)
+        .select('username') // Only select the username field
+        .exec();
+
+      // Return the username or null if user not found
+      return user ? user.username : null;
+    } catch (error) {
+      console.error('Error getting username by ID:', error);
+      throw error; // Rethrow the error for the caller to handle
+    }
+  }
 
   //i really dont remember why i created this function
 
