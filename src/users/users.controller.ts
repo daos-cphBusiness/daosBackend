@@ -11,11 +11,14 @@ import {
   InternalServerErrorException,
   ConflictException,
   NotFoundException,
+  Get,
+  Query,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { AuthGuard } from '../auth/auth.guard';
+import { SearchUserDto } from '../users/dto/search-user.dto';
 
 @Controller('users')
 export class UsersController {
@@ -64,5 +67,15 @@ export class UsersController {
   @Delete(':username')
   async remove(@Param('username') username: string) {
     return await this.usersService.removeUser(username);
+  }
+
+  @Get('search')
+  async searchUser(@Query() searchUserDto: SearchUserDto) {
+    return await this.usersService.searchUser(searchUserDto);
+  }
+
+  @Get()
+  findAll() {
+    return this.usersService.findAll();
   }
 }

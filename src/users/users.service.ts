@@ -9,6 +9,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { Model } from 'mongoose';
 import { User } from './schemas/user.schema';
 import * as bcrypt from 'bcrypt';
+import { SearchUserDto } from '../users/dto/search-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -166,5 +167,18 @@ export class UsersService {
     } catch (error) {
       console.log('Error getting Id by username', error);
     }
+  }
+
+  searchUser(search: SearchUserDto) {
+    const filter: any = {};
+    if (search.username) {
+      // Case-insensitive and partial matchsearch
+      filter.username = { $regex: search.username, $options: 'i' };
+    }
+    return this.userModel.find(filter).exec();
+  }
+
+  findAll() {
+    return this.userModel.find();
   }
 }

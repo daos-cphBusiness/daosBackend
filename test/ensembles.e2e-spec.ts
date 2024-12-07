@@ -47,6 +47,7 @@ describe('EnsemblesController (e2e)', () => {
       const payload: CreateEnsembleDto = {
         name: 'Test Ensemble',
         description: 'This is a test ensemble',
+        Genre: 'Goofy',
       };
 
       const response = await request(app.getHttpServer())
@@ -64,6 +65,7 @@ describe('EnsemblesController (e2e)', () => {
     it('should return validation errors for invalid ensemble', async () => {
       const payload = {
         description: 'Missing name field',
+        Genre: 'Goofy',
       };
 
       const response = await request(app.getHttpServer())
@@ -80,6 +82,7 @@ describe('EnsemblesController (e2e)', () => {
       const payload: CreateEnsembleDto = {
         name: 'Duplicate Ensemble',
         description: 'This will trigger a conflict',
+        Genre: 'Goofy',
       };
 
       await request(app.getHttpServer()).post('/ensembles').send(payload);
@@ -98,6 +101,7 @@ describe('EnsemblesController (e2e)', () => {
       await ensembleService.createEnsemble({
         name: 'Sample Ensemble',
         description: 'Sample description',
+        Genre: 'Goofy',
       });
 
       const response = await request(app.getHttpServer())
@@ -120,6 +124,7 @@ describe('EnsemblesController (e2e)', () => {
       const ensemblePayload = {
         name: 'Link Test Ensemble',
         description: 'Test',
+        Genre: 'Goofy',
       };
       const ensembleResponse = await request(app.getHttpServer())
         .post('/ensembles')
@@ -167,6 +172,7 @@ describe('EnsemblesController (e2e)', () => {
       const payload = {
         name: 'Delete Test Ensemble',
         description: 'To be deleted',
+        Genre: 'Goofy',
       };
       const createResponse = await request(app.getHttpServer())
         .post('/ensembles')
@@ -209,6 +215,7 @@ describe('EnsemblesController (e2e)', () => {
       const ensemble: CreateEnsembleDto = {
         name: 'original ensemble',
         description: 'This is a original ensemble',
+        Genre: 'Goofy',
       };
       const response = await request(app.getHttpServer())
         .post('/ensembles')

@@ -10,6 +10,8 @@ export class Ensemble {
   name: string;
   @Prop()
   description: string;
+  @Prop()
+  genre: string;
   @Prop({
     type: [{ type: mongoose.Schema.Types.ObjectId, ref: User.name }],
     default: [],
