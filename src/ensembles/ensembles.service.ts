@@ -114,8 +114,7 @@ export class EnsemblesService {
     await this.ensembleModel.deleteMany();
   }
 
-  async findUserInEnsemble(username: string) {
-    console.log(username);
+  async findUserInEnsembles(username: string) {
     const userId: string = await this.userService.getUserIdByUsername(username);
     const ensembles = await this.ensembleModel.find({ users: userId }).exec();
     return ensembles.map((ensemble) => ensemble.name);
@@ -126,6 +125,9 @@ export class EnsemblesService {
     if (search.name) {
       // Case-insensitive and partial matchsearch
       filter.name = { $regex: search.name, $options: 'i' };
+    }
+    if (search.genre) {
+      filter.genre = { $regex: search.genre, $options: 'i' };
     }
     return this.ensembleModel.find(filter).exec();
   }

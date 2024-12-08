@@ -10,6 +10,9 @@ import { Model } from 'mongoose';
 import { User } from './schemas/user.schema';
 import * as bcrypt from 'bcrypt';
 import { SearchUserDto } from '../users/dto/search-user.dto';
+import { CreateInstrumentDto } from '../users/instruments/create-instrument.dto';
+import { UpdateInstrumentDto } from '../users/instruments/update-instrument.dto';
+import { Instrument } from '../users/instruments/instrument.schema';
 
 @Injectable()
 export class UsersService {
@@ -136,26 +139,24 @@ export class UsersService {
     }
   }
 
-  //function created for e2e test
+  // this function is created for e2e test
   async deleteMany() {
     return this.userModel.deleteMany({}).exec();
   }
+
   async getUsernameById(userId: User): Promise<string | null> {
     try {
       const user = await this.userModel
         .findById(userId)
-        .select('username') // Only select the username field
+        .select('username')
         .exec();
 
-      // Return the username or null if user not found
       return user ? user.username : null;
     } catch (error) {
       console.error('Error getting username by ID:', error);
-      throw error; // Rethrow the error for the caller to handle
+      throw error;
     }
   }
-
-  //i really dont remember why i created this function
 
   async getUserIdByUsername(username: string): Promise<string | null> {
     try {
@@ -180,5 +181,72 @@ export class UsersService {
 
   findAll() {
     return this.userModel.find();
+  }
+
+  async findAllInstruments(username: string): Promise<Instrument[]> {
+    const userId = await this.getUserIdByUsername(username);
+    const user = await this.userModel.findById(userId).exec();
+    if (!user) {
+      throw new NotFoundException('No user found');
+    }
+
+    const allInstruments: Instrument[] = [];
+
+    user.instruments.forEach((instrument) => {
+      allInstruments.push(instrument);
+    });
+
+    return allInstruments;
+  }
+
+  async addInstrumentToUser(
+    username: string,
+    instrumentData: CreateInstrumentDto,
+  ): Promise<User> {
+    const userId = await this.getUserIdByUsername(username);
+    const user = await this.userModel.findById(userId).exec();
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    user.instruments.push(instrumentData);
+    return await user.save();
+  }
+
+  async removeInstrumentFromUser(username: string, instrumentId: string) {
+    const userId = await this.getUserIdByUsername(username);
+    if (!userId) {
+      throw new NotFoundException('User not found');
+    }
+    return this.userModel
+      .findByIdAndUpdate(
+        userId,
+        { $pull: { instruments: { _id: instrumentId } } },
+        { new: true },
+      )
+      .exec();
+  }
+
+  async updateInstrumentForUser(
+    username: string,
+    instrumentId: string,
+    updatedInstrument: UpdateInstrumentDto,
+  ) {
+    const userId = await this.getUserIdByUsername(username);
+    if (!userId) {
+      throw new NotFoundException('User not found');
+    }
+    return this.userModel
+      .findOneAndUpdate(
+        { _id: userId, 'instruments._id': instrumentId },
+        {
+          $set: {
+            'instruments.$.name': updatedInstrument.name,
+            'instruments.$.genre': updatedInstrument.genre,
+          },
+        },
+        { new: true },
+      )
+      .exec();
   }
 }

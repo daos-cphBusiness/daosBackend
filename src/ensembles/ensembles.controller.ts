@@ -43,7 +43,7 @@ export class EnsemblesController {
   @Get('myEnsembles')
   async getEnseblesByUser(@Req() req) {
     try {
-      return this.ensemblesService.findUserInEnsemble(req.user.username);
+      return this.ensemblesService.findUserInEnsembles(req.user.username);
     } catch (error) {
       console.log('oops', error);
     }

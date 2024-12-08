@@ -19,6 +19,8 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { AuthGuard } from '../auth/auth.guard';
 import { SearchUserDto } from '../users/dto/search-user.dto';
+import { CreateInstrumentDto } from '../users/instruments/create-instrument.dto';
+import { UpdateInstrumentDto } from '../users/instruments/update-instrument.dto';
 
 @Controller('users')
 export class UsersController {
@@ -77,5 +79,42 @@ export class UsersController {
   @Get()
   findAll() {
     return this.usersService.findAll();
+  }
+
+  @Get(':username/instruments')
+  async findAllInstruments(@Param('username') username: string) {
+    return this.usersService.findAllInstruments(username);
+  }
+  @Patch(':username/instruments')
+  async addInstrument(
+    @Param('username') username: string,
+    @Body() instrument: CreateInstrumentDto,
+  ) {
+    try {
+      return await this.usersService.addInstrumentToUser(username, instrument);
+    } catch (error) {
+      console.log('error adding instrument', error);
+    }
+  }
+
+  @Delete(':username/instruments/:instrumentId')
+  async removeInstrument(
+    @Param('username') username: string,
+    @Param('instrumentId') instrumentId: string,
+  ) {
+    return this.usersService.removeInstrumentFromUser(username, instrumentId);
+  }
+
+  @Patch(':username/instruments/:instrumentId')
+  async updateInstrument(
+    @Param('username') username: string,
+    @Param('instrumentId') instrumentId: string,
+    @Body() updatedInstrument: UpdateInstrumentDto,
+  ) {
+    return this.usersService.updateInstrumentForUser(
+      username,
+      instrumentId,
+      updatedInstrument,
+    );
   }
 }

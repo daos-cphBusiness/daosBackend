@@ -10,5 +10,5 @@ export class CreateEnsembleDto {
 
   @IsString({ message: 'Genre should only contain letters' })
   @IsNotEmpty({ message: 'Ensemble genre required ' })
-  Genre: string;
+  genre: string[];
 }
