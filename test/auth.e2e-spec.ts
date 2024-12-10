@@ -46,6 +46,7 @@ describe('AuthController (e2e)', () => {
         username: 'gooduser',
         password: 'password',
         email: 'gooduser@test.com',
+        fullName: 'full name',
       };
 
       const { body } = await request(app.getHttpServer())
@@ -61,6 +62,7 @@ describe('AuthController (e2e)', () => {
         username: 'tt',
         password: 'pp',
         email: 'test@test.com',
+        fullName: 'full name',
       };
 
       const { body } = await request(app.getHttpServer())
@@ -85,6 +87,7 @@ describe('AuthController (e2e)', () => {
         username: 'newuser',
         password: 'password',
         email: 'newuser@daos.com',
+        fullName: 'full name',
       });
 
       const { body } = await request(app.getHttpServer())

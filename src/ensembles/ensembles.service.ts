@@ -2,6 +2,7 @@ import {
   BadRequestException,
   ConflictException,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { CreateEnsembleDto } from './dto/create-ensemble.dto';
@@ -11,6 +12,7 @@ import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { UsersService } from '../users/users.service';
 import { User } from '../users/schemas/user.schema';
+import { SearchEnsembleDTO } from './dto/search-ensemble.dto';
 
 @Injectable()
 export class EnsemblesService {
@@ -48,7 +50,7 @@ export class EnsemblesService {
         return createdEnsemble.save();
       }
     } catch (error) {
-      console.log('Error creating ensemble', error);
+      //console.log('Error creating ensemble', error);
       throw error;
     }
   }
@@ -103,13 +105,34 @@ export class EnsemblesService {
       };
     } catch (error) {
       // Log and rethrow the error
-      console.error('Error deleting ensemble:', error);
-      throw error;
+      // console.error('Error deleting ensemble:', error);
+      throw new InternalServerErrorException(
+        'An unexpected error occurred while updating the user',
+        error,
+      );
     }
   }
 
   //function for testing purposes
   async deleteMany(): Promise<void> {
     await this.ensembleModel.deleteMany();
+  }
+
+  async findUserInEnsembles(username: string) {
+    const userId: string = await this.userService.getUserIdByUsername(username);
+    const ensembles = await this.ensembleModel.find({ users: userId }).exec();
+    return ensembles.map((ensemble) => ensemble.name);
+  }
+
+  searchEnsemble(search: SearchEnsembleDTO) {
+    const filter: any = {};
+    if (search.name) {
+      // Case-insensitive and partial matchsearch
+      filter.name = { $regex: search.name, $options: 'i' };
+    }
+    if (search.genre) {
+      filter.genre = { $regex: search.genre, $options: 'i' };
+    }
+    return this.ensembleModel.find(filter).exec();
   }
 }

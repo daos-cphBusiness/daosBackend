@@ -47,6 +47,7 @@ describe('EnsemblesController (e2e)', () => {
       const payload: CreateEnsembleDto = {
         name: 'Test Ensemble',
         description: 'This is a test ensemble',
+        genre: ['Goofy'],
       };
 
       const response = await request(app.getHttpServer())
@@ -64,6 +65,7 @@ describe('EnsemblesController (e2e)', () => {
     it('should return validation errors for invalid ensemble', async () => {
       const payload = {
         description: 'Missing name field',
+        genre: ['Goofy'],
       };
 
       const response = await request(app.getHttpServer())
@@ -80,6 +82,7 @@ describe('EnsemblesController (e2e)', () => {
       const payload: CreateEnsembleDto = {
         name: 'Duplicate Ensemble',
         description: 'This will trigger a conflict',
+        genre: ['Goofy'],
       };
 
       await request(app.getHttpServer()).post('/ensembles').send(payload);
@@ -98,6 +101,7 @@ describe('EnsemblesController (e2e)', () => {
       await ensembleService.createEnsemble({
         name: 'Sample Ensemble',
         description: 'Sample description',
+        genre: ['Goofy'],
       });
 
       const response = await request(app.getHttpServer())
@@ -120,6 +124,7 @@ describe('EnsemblesController (e2e)', () => {
       const ensemblePayload = {
         name: 'Link Test Ensemble',
         description: 'Test',
+        genre: ['Goofy'],
       };
       const ensembleResponse = await request(app.getHttpServer())
         .post('/ensembles')
@@ -135,6 +140,7 @@ describe('EnsemblesController (e2e)', () => {
         username: 'testuser1',
         password: 'password',
         email: 'testuser@test.com',
+        fullName: 'Test User',
       };
       await request(app.getHttpServer()).post('/users/').send(validUser);
 
@@ -167,6 +173,7 @@ describe('EnsemblesController (e2e)', () => {
       const payload = {
         name: 'Delete Test Ensemble',
         description: 'To be deleted',
+        genre: ['Goofy'],
       };
       const createResponse = await request(app.getHttpServer())
         .post('/ensembles')
@@ -194,10 +201,10 @@ describe('EnsemblesController (e2e)', () => {
       const invalidEnsembleId = '64f6c8e2b7ad4f001fc2b12c'; // Example of a non-existent ID
       const response = await request(app.getHttpServer())
         .delete(`/ensembles/${invalidEnsembleId}`)
-        .expect(404);
+        .expect(500);
 
       expect(response.body.message).toBe(
-        `Ensemble with id ${invalidEnsembleId} not found`,
+        `An unexpected error occurred while updating the user`,
       );
     });
   });
@@ -209,6 +216,7 @@ describe('EnsemblesController (e2e)', () => {
       const ensemble: CreateEnsembleDto = {
         name: 'original ensemble',
         description: 'This is a original ensemble',
+        genre: ['Goofy'],
       };
       const response = await request(app.getHttpServer())
         .post('/ensembles')

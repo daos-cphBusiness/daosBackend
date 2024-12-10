@@ -8,6 +8,10 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
   @MinLength(3, { message: 'Username must be at least 3 characters long' })
   username?: string;
 
+  @IsString({ message: 'Should only contain letters' })
+  @MinLength(3, { message: 'Username must be at least 3 characters long' })
+  fullName: string;
+
   @IsOptional()
   @IsEmail({}, { message: 'Please provide a valid email address' })
   email?: string;

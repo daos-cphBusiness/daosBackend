@@ -47,6 +47,7 @@ describe('AuthController (e2e)', () => {
         username: 'testuser',
         password: 'password',
         email: 'testuser@test.com',
+        fullName: 'full Name',
       };
 
       const { body } = await request(app.getHttpServer())
@@ -65,6 +66,7 @@ describe('AuthController (e2e)', () => {
         username: 'uu',
         password: 'pp',
         email: 'wrongEmail',
+        fullName: 'fullName',
       };
 
       const { body } = await request(app.getHttpServer())
@@ -98,15 +100,17 @@ describe('AuthController (e2e)', () => {
         username: 'newuser',
         password: 'password',
         email: 'newuser@daos.com',
+        fullName: 'full Name',
       });
       const validUser: UpdateUserDto = {
         username: 'testuser',
         password: 'password',
         email: 'testuser@test.com',
+        fullName: 'full Name',
       };
 
       await request(app.getHttpServer())
-        .patch('/users/newuser')
+        .patch('/users')
         .send(validUser)
         .expect(401);
       //console.log(body);
@@ -119,6 +123,7 @@ describe('AuthController (e2e)', () => {
         username: 'firstuser',
         password: 'password',
         email: 'firstuser@daos.com',
+        fullName: 'full Name',
       };
       await request(app.getHttpServer())
         .post('/auth/signUp')
@@ -137,10 +142,11 @@ describe('AuthController (e2e)', () => {
         username: 'seconduser',
         password: 'password',
         email: 'seconduser@test.com',
+        fullName: 'full Name',
       };
 
       const { body } = await request(app.getHttpServer())
-        .patch('/users/firstuser')
+        .patch('/users')
         .set('Authorization', `Bearer ${authToken}`)
         .send(validUser)
         .expect(200);
@@ -157,6 +163,7 @@ describe('AuthController (e2e)', () => {
         username: 'newuser',
         password: 'password',
         email: 'newuser@daos.com',
+        fullName: 'full Name',
       });
 
       const loginResponse = await request(app.getHttpServer())
@@ -172,10 +179,11 @@ describe('AuthController (e2e)', () => {
         username: 'un',
         password: 'ps',
         email: 'tt',
+        fullName: 'full Name',
       };
 
       const { body } = await request(app.getHttpServer())
-        .patch('/users/newuser')
+        .patch('/users')
         .set('Authorization', `Bearer ${authToken}`)
         .send(invalidUser)
         .expect(400);
@@ -205,6 +213,7 @@ describe('AuthController (e2e)', () => {
         username: 'newuser',
         password: 'password',
         email: 'newuser@daos.com',
+        fullName: 'full Name',
       });
 
       await request(app.getHttpServer()).delete('/users/newuser').expect(401);
@@ -219,6 +228,7 @@ describe('AuthController (e2e)', () => {
         username: 'newuser',
         password: 'password',
         email: 'newuser@daos.com',
+        fullName: 'full Name',
       });
       const loginResponse = await request(app.getHttpServer())
         .post('/auth/login')

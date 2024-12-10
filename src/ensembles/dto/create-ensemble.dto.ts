@@ -7,4 +7,7 @@ export class CreateEnsembleDto {
 
   @IsOptional()
   description: string;
+
+  @IsNotEmpty({ message: 'Ensemble genre required ' })
+  genre: string[];
 }
