@@ -37,7 +37,8 @@ export class UsersController {
         throw error;
       } else {
         throw new InternalServerErrorException(
-          'An unexpected error occurred while creating the user.',
+          'An error occurred while creating the user.',
+          error,
         );
       }
     }
@@ -60,7 +61,8 @@ export class UsersController {
       } else {
         // console.log(error);
         throw new InternalServerErrorException(
-          'An unexpected error occurred while updating the user.',
+          'An error occurred while updating the user.',
+          error,
         );
       }
     }
@@ -68,55 +70,77 @@ export class UsersController {
 
   @HttpCode(HttpStatus.NO_CONTENT)
   @UseGuards(AuthGuard)
-  @Delete(':username')
-  async remove(@Param('username') username: string) {
-    return await this.usersService.removeUser(username);
+  @Delete()
+  async remove(@Req() req) {
+    return await this.usersService.removeUser(req.user.username);
   }
 
+  @HttpCode(HttpStatus.OK)
   @Get('search')
   async searchUser(@Query() searchUserDto: SearchUserDto) {
     return await this.usersService.searchUser(searchUserDto);
   }
 
+  @HttpCode(HttpStatus.OK)
   @Get()
   findAll() {
     return this.usersService.findAll();
   }
 
+  @HttpCode(HttpStatus.OK)
   @Get(':username/instruments')
   async findAllInstruments(@Param('username') username: string) {
     return this.usersService.findAllInstruments(username);
   }
-  @Patch(':username/instruments')
-  async addInstrument(
-    @Param('username') username: string,
-    @Body() instrument: CreateInstrumentDto,
-  ) {
+
+  @UseGuards(AuthGuard)
+  @HttpCode(HttpStatus.OK)
+  @Patch('/instruments')
+  async addInstrument(@Req() req, @Body() instrument: CreateInstrumentDto) {
     try {
-      return await this.usersService.addInstrumentToUser(username, instrument);
+      return await this.usersService.addInstrumentToUser(
+        req.user.username,
+        instrument,
+      );
     } catch (error) {
       console.log('error adding instrument', error);
+      throw error;
     }
   }
 
-  @Delete(':username/instruments/:instrumentId')
+  @UseGuards(AuthGuard)
+  @Delete('/instruments/:instrumentId')
   async removeInstrument(
-    @Param('username') username: string,
+    @Req() req,
     @Param('instrumentId') instrumentId: string,
   ) {
-    return this.usersService.removeInstrumentFromUser(username, instrumentId);
+    try {
+      return this.usersService.removeInstrumentFromUser(
+        req.user.username,
+        instrumentId,
+      );
+    } catch (error) {
+      // console.log(error);
+      throw error;
+    }
   }
 
-  @Patch(':username/instruments/:instrumentId')
+  @UseGuards(AuthGuard)
+  @Patch('/instruments/:instrumentId')
   async updateInstrument(
-    @Param('username') username: string,
+    @Req() req,
     @Param('instrumentId') instrumentId: string,
     @Body() updatedInstrument: UpdateInstrumentDto,
   ) {
-    return this.usersService.updateInstrumentForUser(
-      username,
-      instrumentId,
-      updatedInstrument,
-    );
+    try {
+      return this.usersService.updateInstrumentForUser(
+        req.user.username,
+        instrumentId,
+        updatedInstrument,
+      );
+    } catch (error) {
+      // console.log(error);
+      throw error;
+    }
   }
 }

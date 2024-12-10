@@ -125,15 +125,9 @@ export class UsersService {
     }
   }
 
-  async removeUser(username: string) {
+  async removeUser(username) {
     try {
-      const usernameUser = await this.findByUsername(username);
-
-      if (usernameUser) {
-        await this.userModel.deleteOne(usernameUser);
-      } else {
-        return new NotFoundException('Username could not be found');
-      }
+      await this.userModel.deleteOne({ username: username });
     } catch (error) {
       console.log('Error deleting the user', error);
     }
@@ -176,6 +170,16 @@ export class UsersService {
       // Case-insensitive and partial matchsearch
       filter.username = { $regex: search.username, $options: 'i' };
     }
+    if (search.instrument) {
+      filter.instrument = {
+        $elemMatch: {
+          $or: [
+            { name: { $regex: search.instrument, $options: 'i' } },
+            { genre: { $regex: search.instrument, $options: 'i' } },
+          ],
+        },
+      };
+    }
     return this.userModel.find(filter).exec();
   }
 
@@ -192,7 +196,7 @@ export class UsersService {
 
     const allInstruments: Instrument[] = [];
 
-    user.instruments.forEach((instrument) => {
+    user.instrument.forEach((instrument) => {
       allInstruments.push(instrument);
     });
 
@@ -209,7 +213,7 @@ export class UsersService {
     if (!user) {
       throw new NotFoundException('User not found');
     }
-    user.instruments.push(instrumentData);
+    user.instrument.push(instrumentData);
     return await user.save();
   }
 

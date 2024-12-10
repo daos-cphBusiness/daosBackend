@@ -207,7 +207,7 @@ describe('AuthController (e2e)', () => {
     });
   });
 
-  describe('users/newuser', () => {
+  describe('users', () => {
     it('should be able to delete oneself if is an authorized user', async () => {
       await userService.createUser({
         username: 'newuser',
@@ -216,13 +216,13 @@ describe('AuthController (e2e)', () => {
         fullName: 'full Name',
       });
 
-      await request(app.getHttpServer()).delete('/users/newuser').expect(401);
+      await request(app.getHttpServer()).delete('/users').expect(401);
 
       //console.log(body);
     });
   });
 
-  describe('users/newuser', () => {
+  describe('users', () => {
     it('should be able to delete oneself if is an authorized user', async () => {
       await userService.createUser({
         username: 'newuser',
@@ -240,7 +240,7 @@ describe('AuthController (e2e)', () => {
       const authToken = loginResponse.body.access_token;
 
       const response = await request(app.getHttpServer())
-        .delete('/users/newuser')
+        .delete('/users')
         .set('Authorization', `Bearer ${authToken}`)
         .expect(204);
 

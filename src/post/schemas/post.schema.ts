@@ -12,7 +12,7 @@ export class Post {
   @Prop({ required: true })
   description: string;
   @Prop({ required: true })
-  genre: string;
+  genre: string[];
   @Prop({
     type: [{ type: mongoose.Schema.Types.ObjectId, ref: Ensemble.name }],
     // default: [], not defaulting to an empty array because its optional
