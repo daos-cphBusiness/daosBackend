@@ -13,7 +13,7 @@ export class CreatePostDto {
   description: string;
 
   @IsNotEmpty({ message: 'Field Required' })
-  genre: string;
+  genre: string[];
 
   @IsOptional()
   ensemble?: Ensemble;

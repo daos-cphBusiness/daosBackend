@@ -60,7 +60,8 @@ export class EnsemblesService {
       const ensemble = await this.ensembleModel.findOne({ name }).exec();
       return ensemble || undefined;
     } catch (error) {
-      console.log('error finding the enseble', error);
+      console.log('error finding the ensemble', error);
+      throw error;
     }
   }
 
@@ -68,12 +69,11 @@ export class EnsemblesService {
     return this.ensembleModel.find().populate('users');
   }
 
-  async findOne(id: string) {
+  async findEnsembleById(id: string) {
     const emsemble = await this.ensembleModel.findById(id).populate('users');
     if (!emsemble) {
-      throw new NotFoundException(`Ensemble with ID ${id} not found`);
+      throw new NotFoundException('Ensemble not found');
     }
-
     return emsemble;
   }
 
@@ -84,7 +84,7 @@ export class EnsemblesService {
     const existingEnsemble = await this.ensembleModel.findById(id);
 
     if (!existingEnsemble) {
-      throw new NotFoundException(`Ensemble with ID ${id} not found`);
+      throw new NotFoundException('Ensemble not found');
     }
 
     // Merge existing data with the new updates
@@ -93,21 +93,18 @@ export class EnsemblesService {
     return existingEnsemble.save();
   }
 
-  async remove(id: string): Promise<{ message: string }> {
+  async remove(id: string): Promise<void> {
     try {
       // Attempt to find and delete the ensemble by ID
       const result = await this.ensembleModel.findByIdAndDelete(id);
       if (!result) {
-        throw new NotFoundException(`Ensemble with id ${id} not found`);
+        throw new NotFoundException('Ensemble not found');
       }
-      return {
-        message: `Ensemble with id ${id} has been successfully deleted`,
-      };
     } catch (error) {
       // Log and rethrow the error
       // console.error('Error deleting ensemble:', error);
       throw new InternalServerErrorException(
-        'An unexpected error occurred while updating the user',
+        'An error occurred while updating the user',
         error,
       );
     }
@@ -118,7 +115,7 @@ export class EnsemblesService {
     await this.ensembleModel.deleteMany();
   }
 
-  async findUserInEnsembles(username: string) {
+  async findEnsemblesByUser(username: string) {
     const userId: string = await this.userService.getUserIdByUsername(username);
     const ensembles = await this.ensembleModel.find({ users: userId }).exec();
     return ensembles.map((ensemble) => ensemble.name);

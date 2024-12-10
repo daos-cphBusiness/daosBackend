@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { Post } from './schemas/post.schema';
@@ -16,24 +20,43 @@ export class PostService {
 
   async create(createPostDto: CreatePostDto, username: string) {
     const user: User = await this.userService.findByUsername(username);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
     createPostDto.user = user;
     const createdPost = await new this.postModel(createPostDto);
     return await createdPost.save();
   }
 
-  findAll() {
-    return `This action returns all post`;
+  async findPostByUser(username: any) {
+    const userId = await this.userService.getUserIdByUsername(username);
+    const posts = await this.postModel.find({ user: userId }).exec();
+    return posts.map((post) => post.title);
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} post`;
+  async update(id: string, updatePostDto: UpdatePostDto) {
+    // console.log(id);
+    try {
+      const updatedpost = await this.postModel.findOneAndUpdate(
+        { _id: id },
+        { $set: updatePostDto },
+        { new: true },
+      );
+      console.log(updatedpost);
+      return updatedpost;
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
   }
 
-  update(id: number, updatePostDto: UpdatePostDto) {
-    return `This action updates a #${id} post`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} post`;
+  async remove(id: string) {
+    try {
+      await this.postModel.deleteOne({ _id: id });
+      return {
+        message: 'Post has been successfully deleted',
+      };
+    } catch (error) {
+      console.log('Error deleting the post', error);
+    }
   }
 }

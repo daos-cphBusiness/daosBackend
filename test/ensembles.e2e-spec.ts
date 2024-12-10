@@ -157,7 +157,7 @@ describe('EnsemblesController (e2e)', () => {
       const response = await request(app.getHttpServer())
         .post(`/ensembles/${ensembleId}/users`)
         .set('Authorization', `Bearer ${authToken}`)
-        .expect(201);
+        .expect(200);
 
       // console.log('yo ', response.body.users);
       // Step 3: Validate the user is linked
@@ -185,11 +185,10 @@ describe('EnsemblesController (e2e)', () => {
       // Delete the ensemble
       const deleteResponse = await request(app.getHttpServer())
         .delete(`/ensembles/${ensembleId}`)
-        .expect(200);
+        .expect(204);
 
-      expect(deleteResponse.body.message).toBe(
-        `Ensemble with id ${ensembleId} has been successfully deleted`,
-      );
+      //console.log(deleteResponse.body);
+      expect(deleteResponse.body.message).toBeUndefined();
 
       //Verify that the ensemble no longer exists
       await request(app.getHttpServer())
@@ -204,7 +203,7 @@ describe('EnsemblesController (e2e)', () => {
         .expect(500);
 
       expect(response.body.message).toBe(
-        `An unexpected error occurred while updating the user`,
+        `An error occurred while updating the user`,
       );
     });
   });
@@ -257,9 +256,7 @@ describe('EnsemblesController (e2e)', () => {
         .send({ name: 'New Name' });
 
       expect(response.status).toBe(404);
-      expect(response.body.message).toBe(
-        'Ensemble with ID 63c15d7b8d5a5a001c8b4567 not found',
-      );
+      expect(response.body.message).toBe('Ensemble not found');
     });
   });
 });

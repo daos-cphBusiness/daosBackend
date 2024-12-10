@@ -15,7 +15,7 @@ export class User {
   @Prop({ required: true })
   email: string;
   @Prop({ type: [InstrumentSchema] }) // Nested schemas instead of separate Collection for tight coupling
-  instruments: Instrument[];
+  instrument: Instrument[];
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

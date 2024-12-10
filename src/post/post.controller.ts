@@ -10,6 +10,7 @@ import {
   HttpStatus,
   UseGuards,
   Req,
+  InternalServerErrorException,
 } from '@nestjs/common';
 import { PostService } from './post.service';
 import { CreatePostDto } from './dto/create-post.dto';
@@ -31,23 +32,27 @@ export class PostController {
     }
   }
 
-  @Get()
-  findAll() {
-    return this.postService.findAll();
+  @UseGuards(AuthGuard)
+  @HttpCode(HttpStatus.OK)
+  @Get('myPosts')
+  async getPostsByUser(@Req() req) {
+    try {
+      return this.postService.findPostByUser(req.user.username);
+    } catch (error) {
+      console.log('oops', error);
+      throw new InternalServerErrorException(error);
+    }
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.postService.findOne(+id);
-  }
-
+  @HttpCode(HttpStatus.OK)
   @Patch(':id')
   update(@Param('id') id: string, @Body() updatePostDto: UpdatePostDto) {
-    return this.postService.update(+id, updatePostDto);
+    return this.postService.update(id, updatePostDto);
   }
 
+  @HttpCode(HttpStatus.NO_CONTENT)
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.postService.remove(+id);
+    return this.postService.remove(id);
   }
 }
