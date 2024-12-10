@@ -13,6 +13,7 @@ import {
   NotFoundException,
   Get,
   Query,
+  Req,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -44,19 +45,20 @@ export class UsersController {
 
   @HttpCode(HttpStatus.OK)
   @UseGuards(AuthGuard)
-  @Patch(':username')
-  async update(
-    @Param('username') username: string,
-    @Body() updateUserDto: UpdateUserDto,
-  ) {
+  @Patch()
+  async update(@Req() req, @Body() updateUserDto: UpdateUserDto) {
     try {
-      return await this.usersService.updateUser(username, updateUserDto);
+      return await this.usersService.updateUser(
+        req.user.username,
+        updateUserDto,
+      );
     } catch (error) {
       if (error instanceof ConflictException) {
         throw error;
       } else if (error instanceof NotFoundException) {
         throw error;
       } else {
+        // console.log(error);
         throw new InternalServerErrorException(
           'An unexpected error occurred while updating the user.',
         );

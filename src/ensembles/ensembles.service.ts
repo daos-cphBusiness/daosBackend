@@ -2,6 +2,7 @@ import {
   BadRequestException,
   ConflictException,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { CreateEnsembleDto } from './dto/create-ensemble.dto';
@@ -49,7 +50,7 @@ export class EnsemblesService {
         return createdEnsemble.save();
       }
     } catch (error) {
-      console.log('Error creating ensemble', error);
+      //console.log('Error creating ensemble', error);
       throw error;
     }
   }
@@ -104,8 +105,11 @@ export class EnsemblesService {
       };
     } catch (error) {
       // Log and rethrow the error
-      console.error('Error deleting ensemble:', error);
-      throw error;
+      // console.error('Error deleting ensemble:', error);
+      throw new InternalServerErrorException(
+        'An unexpected error occurred while updating the user',
+        error,
+      );
     }
   }
 

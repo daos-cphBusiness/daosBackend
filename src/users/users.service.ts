@@ -95,7 +95,7 @@ export class UsersService {
       updateUserDto.email,
     );
     try {
-      // console.log(username);
+      // console.log('here 2', username);
       const user = await this.findByUsername(username);
 
       if (!user) {
