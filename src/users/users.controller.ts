@@ -71,6 +71,12 @@ export class UsersController {
   async remove(@Req() req) {
     return await this.usersService.removeUser(req.user.username);
   }
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(AuthGuard)
+  @Get('/user')
+  async getUser(@Req() req) {
+    return await this.usersService.getUserData(req.user.username);
+  }
 
   @HttpCode(HttpStatus.OK)
   @Get('search')

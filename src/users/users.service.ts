@@ -85,6 +85,10 @@ export class UsersService {
     return user || undefined;
   }
 
+  async getUserData(username: string) {
+    return await this.findByUsername(username);
+  }
+
   async updateUser(
     username: string,
     updateUserDto: UpdateUserDto,
