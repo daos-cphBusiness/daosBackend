@@ -13,14 +13,17 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async signIn(signInDto: SignInDto): Promise<{ access_token: string }> {
+  async signIn(
+    signInDto: SignInDto,
+  ): Promise<{ user: User; access_token: string }> {
     const { username, password } = signInDto;
     const user = await this.validateUser(username, password);
 
-    const payload = { username: user.username };
+    const payload = { username: user.username }; //creating a JavaScript object named payload with a single property username,
+    //  and its value is set to the username property of the user object.
     const access_token = await this.jwtService.signAsync(payload);
 
-    return { access_token };
+    return { user, access_token };
   }
 
   async validateUser(username: string, password: string): Promise<User | null> {

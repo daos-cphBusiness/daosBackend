@@ -118,7 +118,7 @@ export class EnsemblesService {
   async findEnsemblesByUser(username: string) {
     const userId: string = await this.userService.getUserIdByUsername(username);
     const ensembles = await this.ensembleModel.find({ users: userId }).exec();
-    return ensembles.map((ensemble) => ensemble.name);
+    return ensembles;
   }
 
   searchEnsemble(search: SearchEnsembleDTO) {

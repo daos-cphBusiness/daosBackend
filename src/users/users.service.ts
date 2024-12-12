@@ -1,5 +1,6 @@
 import {
   ConflictException,
+  ForbiddenException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -94,24 +95,48 @@ export class UsersService {
     const emailCheck = await this.findByEmailWithConflictCheck(
       updateUserDto.email,
     );
+    const user = await this.findByUsername(username);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    } else if (usernameCheck) {
+      throw new ConflictException('Username already taken');
+    } else if (emailCheck) {
+      throw new ConflictException('Email already taken');
+    }
     try {
       // console.log('here 2', username);
-      const user = await this.findByUsername(username);
 
-      if (!user) {
-        throw new NotFoundException('User not found');
-      }
-      if (usernameCheck) {
-        throw new ConflictException('Username already taken');
-      } else if (emailCheck) {
-        throw new ConflictException('Email already taken');
-      } else {
-        if (updateUserDto.password) {
-          updateUserDto.password = await bcrypt.hash(
-            updateUserDto.password,
+      if (updateUserDto.newPassword || updateUserDto.oldPassword) {
+        if (!updateUserDto.oldPassword || !user.password) {
+          throw new Error('Invalid password data');
+        }
+        const isMatch = await bcrypt.compare(
+          updateUserDto.oldPassword,
+          user.password,
+        );
+        if (!isMatch) {
+          throw new ForbiddenException('Your current Password is not correct');
+        }
+
+        if (updateUserDto.newPassword) {
+          updateUserDto.newPassword = await bcrypt.hash(
+            updateUserDto.newPassword,
             10,
           );
         }
+        const updateData = {
+          ...updateUserDto, // very cool thing where we disintegrate the updaterUserDto
+          password: updateUserDto.newPassword,
+        };
+        delete updateData.oldPassword;
+
+        const updatedUser = await this.userModel.findOneAndUpdate(
+          { username },
+          { $set: updateData },
+          { new: true },
+        );
+        return updatedUser;
+      } else {
         const updatedUser = await this.userModel.findOneAndUpdate(
           { username },
           { $set: updateUserDto },
