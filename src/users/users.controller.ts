@@ -60,10 +60,7 @@ export class UsersController {
         throw error;
       } else {
         // console.log(error);
-        throw new InternalServerErrorException(
-          'An error occurred while updating the user.',
-          error,
-        );
+        throw error;
       }
     }
   }

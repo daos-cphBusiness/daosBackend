@@ -10,7 +10,11 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
 
   @IsString({ message: 'Should only contain letters' })
   @MinLength(3, { message: 'Username must be at least 3 characters long' })
-  fullName: string;
+  fullName?: string;
+
+  @IsOptional()
+  @IsString()
+  description?: string;
 
   @IsOptional()
   @IsEmail({}, { message: 'Please provide a valid email address' })
@@ -19,5 +23,10 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
   @IsOptional()
   @IsString()
   @MinLength(6, { message: 'Password must be at least 6 characters long' })
-  password?: string;
+  newPassword?: string;
+
+  @IsOptional()
+  @IsString()
+  @MinLength(6, { message: 'Password must be at least 6 characters long' })
+  oldPassword?: string;
 }
