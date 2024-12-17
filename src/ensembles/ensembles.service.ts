@@ -35,7 +35,7 @@ export class EnsemblesService {
       ensemble.users.push(user);
       return ensemble.save();
     } catch (error) {
-      console.log('Error joining the group', error);
+      //console.log('Error joining the group', error);
       throw error;
     }
   }
