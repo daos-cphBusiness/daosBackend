@@ -21,3 +21,18 @@ export class User {
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
+
+// Add a global transformation to exclude sensitive fields
+UserSchema.set('toJSON', {
+  transform: (doc, ret) => {
+    delete ret.password; // Remove password field
+    return ret;
+  },
+});
+
+UserSchema.set('toObject', {
+  transform: (doc, ret) => {
+    delete ret.password; // Remove password field
+    return ret;
+  },
+});
