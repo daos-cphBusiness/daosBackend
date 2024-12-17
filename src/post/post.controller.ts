@@ -17,7 +17,7 @@ import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { AuthGuard } from '../auth/auth.guard';
 
-@Controller('post')
+@Controller('posts')
 export class PostController {
   constructor(private readonly postService: PostService) {}
 
@@ -36,6 +36,7 @@ export class PostController {
   @HttpCode(HttpStatus.OK)
   @Get('myPosts')
   async getPostsByUser(@Req() req) {
+    // console.log(req);
     try {
       return this.postService.findPostByUser(req.user.username);
     } catch (error) {

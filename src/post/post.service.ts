@@ -23,15 +23,18 @@ export class PostService {
     if (!user) {
       throw new NotFoundException('User not found');
     }
-    createPostDto.user = user;
+    createPostDto.user = user; // The user who creates the post is attached to the post object here.
     const createdPost = await new this.postModel(createPostDto);
     return await createdPost.save();
   }
 
   async findPostByUser(username: any) {
     const userId = await this.userService.getUserIdByUsername(username);
-    const posts = await this.postModel.find({ user: userId }).exec();
-    return posts.map((post) => post.title);
+    const posts = await this.postModel
+      .find({ user: userId })
+      .populate('user', 'fullName') // Populate 'user' field with 'fullName'
+      .exec();
+    return posts;
   }
 
   async update(id: string, updatePostDto: UpdatePostDto) {
