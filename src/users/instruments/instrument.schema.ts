@@ -8,7 +8,7 @@ export class Instrument {
   @Prop({ required: true })
   name: string;
 
-  @Prop({ required: true })
+  @Prop()
   genre: string[];
 }
 
