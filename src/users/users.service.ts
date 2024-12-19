@@ -85,6 +85,20 @@ export class UsersService {
     return user || undefined;
   }
 
+  async findByEmailWithCheckForSameUser(
+    email: string,
+    username: string,
+  ): Promise<User | null> {
+    const user = await this.userModel.findOne({ email }).exec();
+    if (user.username === username) {
+      return null;
+    }
+    if (user) {
+      throw new ConflictException('The provided email is already in use');
+    }
+    return user || null;
+  }
+
   async getUserData(username: string) {
     return await this.findByUsername(username);
   }
@@ -93,19 +107,15 @@ export class UsersService {
     username: string,
     updateUserDto: UpdateUserDto,
   ): Promise<User | null> {
-    const usernameCheck = await this.findByUsernameWithConflictCheck(
-      updateUserDto.username,
-    );
-    const emailCheck = await this.findByEmailWithConflictCheck(
-      updateUserDto.email,
-    );
+    if (updateUserDto.username) {
+      await this.findByUsernameWithConflictCheck(updateUserDto.username);
+    }
+    if (updateUserDto.email) {
+      await this.findByEmailWithCheckForSameUser(updateUserDto.email, username);
+    }
     const user = await this.findByUsername(username);
     if (!user) {
       throw new NotFoundException('User not found');
-    } else if (usernameCheck) {
-      throw new ConflictException('Username already taken');
-    } else if (emailCheck) {
-      throw new ConflictException('Email already taken');
     }
     try {
       // console.log('here 2', username);

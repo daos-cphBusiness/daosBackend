@@ -3,13 +3,10 @@ import { CreateUserDto } from './create-user.dto';
 import { IsString, IsEmail, MinLength, IsOptional } from 'class-validator';
 
 export class UpdateUserDto extends PartialType(CreateUserDto) {
-  @IsOptional()
-  @IsString()
-  @MinLength(3, { message: 'Username must be at least 3 characters long' })
-  username?: string;
-
   @IsString({ message: 'Should only contain letters' })
-  @MinLength(3, { message: 'Username must be at least 3 characters long' })
+  @MinLength(3, {
+    message: 'First and Last name must be at least 3 characters long',
+  })
   fullName?: string;
 
   @IsOptional()

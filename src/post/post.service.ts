@@ -28,7 +28,7 @@ export class PostService {
     return await createdPost.save();
   }
 
-  async findPostByUser(username: any) {
+  async findPostByUser(username: string) {
     const userId = await this.userService.getUserIdByUsername(username);
     const posts = await this.postModel
       .find({ user: userId })

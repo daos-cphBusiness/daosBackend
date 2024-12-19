@@ -2,7 +2,6 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Ensemble } from '../../ensembles/schemas/ensemble.schema';
 import { User } from '../../users/schemas/user.schema';
 import mongoose, { HydratedDocument } from 'mongoose';
-import { Instrument } from '../../users/instruments/instrument.schema';
 
 export type PostDocument = HydratedDocument<Post>;
 
@@ -15,7 +14,7 @@ export class Post {
   @Prop({ required: true })
   genre: string[];
   @Prop({ required: true })
-  instrument: Instrument[];
+  instrument: string;
   @Prop({
     type: [{ type: mongoose.Schema.Types.ObjectId, ref: Ensemble.name }],
     // default: [], not defaulting to an empty array because its optional

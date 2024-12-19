@@ -141,7 +141,6 @@ describe('AuthController (e2e)', () => {
       const validUser: UpdateUserDto = {
         username: 'seconduser',
         password: 'password',
-        email: 'seconduser@test.com',
         fullName: 'full Name',
       };
 
@@ -152,7 +151,7 @@ describe('AuthController (e2e)', () => {
         .expect(200);
 
       expect(body).toHaveProperty('username', 'seconduser');
-      expect(body).toHaveProperty('email', 'seconduser@test.com');
+      expect(body).toHaveProperty('email', 'firstuser@daos.com');
       // console.log(body);
     });
   });
