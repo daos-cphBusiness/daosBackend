@@ -29,7 +29,7 @@ export class EnsemblesService {
       for (const UserId of UserIds) {
         const foundUsername = await this.userService.getUsernameById(UserId);
         if (username === foundUsername) {
-          throw new BadRequestException('User already exists in the ensemble.');
+          throw new BadRequestException('You are already in the group.');
         }
       }
       ensemble.users.push(user);

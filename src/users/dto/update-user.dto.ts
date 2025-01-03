@@ -24,6 +24,6 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
 
   @IsOptional()
   @IsString()
-  @MinLength(6, { message: 'Password must be at least 6 characters long' })
+  @MinLength(6, { message: 'Your current password is incorrect' })
   oldPassword?: string;
 }
