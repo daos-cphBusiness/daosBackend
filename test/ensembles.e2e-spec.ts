@@ -123,7 +123,7 @@ describe('EnsemblesController (e2e)', () => {
   });
 
   describe('/ensembles/:id/users (POST)', () => {
-    let ensembleId: string;
+    let ensembleId;
 
     beforeEach(async () => {
       // Create the ensemble
@@ -132,12 +132,10 @@ describe('EnsemblesController (e2e)', () => {
         description: 'Test',
         genre: ['Goofy'],
       };
-      const ensembleResponse = await request(app.getHttpServer())
-        .post('/ensembles')
-        .send(ensemblePayload)
-        .expect(201);
+      const ensembleResponse =
+        await ensembleService.createEnsemble(ensemblePayload);
 
-      ensembleId = ensembleResponse.body._id;
+      ensembleId = ensembleResponse._id;
     });
 
     it('should link a user to the ensemble', async () => {
