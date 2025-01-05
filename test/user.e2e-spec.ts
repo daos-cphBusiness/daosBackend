@@ -9,16 +9,19 @@ import { CreateUserDto } from '../src/users/dto/create-user.dto';
 import { TestModule } from '../src/test.module';
 import { UsersService } from '../src/users/users.service';
 import { UpdateUserDto } from '../src/users/dto/update-user.dto';
+import { AuthService } from '../src/auth/auth.service';
 
 describe('AuthController (e2e)', () => {
   let app: INestApplication;
   let userService: UsersService;
+  let authService: AuthService;
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [TestModule],
     }).compile();
     userService = moduleFixture.get<UsersService>(UsersService);
+    authService = moduleFixture.get<AuthService>(AuthService);
 
     app = moduleFixture.createNestApplication();
     app.useGlobalPipes(
@@ -125,18 +128,15 @@ describe('AuthController (e2e)', () => {
         email: 'firstuser@daos.com',
         fullName: 'full Name',
       };
-      await request(app.getHttpServer())
-        .post('/auth/signUp')
-        .send(validnewUser);
 
-      const loginResponse = await request(app.getHttpServer())
-        .post('/auth/login')
-        .send({
-          username: 'firstuser',
-          password: 'password',
-        });
+      await userService.createUser(validnewUser);
 
-      const authToken = loginResponse.body.access_token;
+      const loginResponse = await authService.signIn({
+        username: 'firstuser',
+        password: 'password',
+      });
+
+      const authToken = loginResponse.access_token;
 
       const validUser: UpdateUserDto = {
         username: 'seconduser',
@@ -165,14 +165,12 @@ describe('AuthController (e2e)', () => {
         fullName: 'full Name',
       });
 
-      const loginResponse = await request(app.getHttpServer())
-        .post('/auth/login')
-        .send({
-          username: 'newuser',
-          password: 'password',
-        });
+      const loginResponse = await authService.signIn({
+        username: 'newuser',
+        password: 'password',
+      });
 
-      const authToken = loginResponse.body.access_token;
+      const authToken = loginResponse.access_token;
 
       const invalidUser: UpdateUserDto = {
         username: 'un',
@@ -229,14 +227,13 @@ describe('AuthController (e2e)', () => {
         email: 'newuser@daos.com',
         fullName: 'full Name',
       });
-      const loginResponse = await request(app.getHttpServer())
-        .post('/auth/login')
-        .send({
-          username: 'newuser',
-          password: 'password',
-        });
 
-      const authToken = loginResponse.body.access_token;
+      const loginResponse = await authService.signIn({
+        username: 'newuser',
+        password: 'password',
+      });
+
+      const authToken = loginResponse.access_token;
 
       const response = await request(app.getHttpServer())
         .delete('/users')

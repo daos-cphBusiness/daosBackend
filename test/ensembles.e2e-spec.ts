@@ -9,10 +9,14 @@ import { CreateEnsembleDto } from '../src/ensembles/dto/create-ensemble.dto';
 import { TestModule } from '../src/test.module';
 import { EnsemblesService } from '../src/ensembles/ensembles.service';
 import { CreateUserDto } from '../src/users/dto/create-user.dto';
+import { UsersService } from '../src/users/users.service';
+import { AuthService } from '../src/auth/auth.service';
 
 describe('EnsemblesController (e2e)', () => {
   let app: INestApplication;
   let ensembleService: EnsemblesService;
+  let userService: UsersService;
+  let authService: AuthService;
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -20,6 +24,8 @@ describe('EnsemblesController (e2e)', () => {
     }).compile();
 
     ensembleService = moduleFixture.get<EnsemblesService>(EnsemblesService);
+    userService = moduleFixture.get<UsersService>(UsersService);
+    authService = moduleFixture.get<AuthService>(AuthService);
 
     app = moduleFixture.createNestApplication();
     app.useGlobalPipes(
@@ -117,7 +123,7 @@ describe('EnsemblesController (e2e)', () => {
   });
 
   describe('/ensembles/:id/users (POST)', () => {
-    let ensembleId: string;
+    let ensembleId;
 
     beforeEach(async () => {
       // Create the ensemble
@@ -126,12 +132,10 @@ describe('EnsemblesController (e2e)', () => {
         description: 'Test',
         genre: ['Goofy'],
       };
-      const ensembleResponse = await request(app.getHttpServer())
-        .post('/ensembles')
-        .send(ensemblePayload)
-        .expect(201);
+      const ensembleResponse =
+        await ensembleService.createEnsemble(ensemblePayload);
 
-      ensembleId = ensembleResponse.body._id;
+      ensembleId = ensembleResponse._id;
     });
 
     it('should link a user to the ensemble', async () => {
@@ -142,16 +146,14 @@ describe('EnsemblesController (e2e)', () => {
         email: 'testuser@test.com',
         fullName: 'Test User',
       };
-      await request(app.getHttpServer()).post('/users/').send(validUser);
+      await userService.createUser(validUser);
 
-      const loginResponse = await request(app.getHttpServer())
-        .post('/auth/login')
-        .send({
-          username: 'testuser1',
-          password: 'password',
-        });
+      const loginResponse = await authService.signIn({
+        username: 'testuser1',
+        password: 'password',
+      });
       // console.log(loginResponse);
-      const authToken = loginResponse.body.access_token;
+      const authToken = loginResponse.access_token;
 
       // Step 2: Link the user to the ensemble
       const response = await request(app.getHttpServer())
@@ -175,12 +177,9 @@ describe('EnsemblesController (e2e)', () => {
         description: 'To be deleted',
         genre: ['Goofy'],
       };
-      const createResponse = await request(app.getHttpServer())
-        .post('/ensembles')
-        .send(payload)
-        .expect(201);
+      const createResponse = await ensembleService.createEnsemble(payload);
 
-      const ensembleId = createResponse.body._id;
+      const ensembleId = createResponse._id;
 
       // Delete the ensemble
       const deleteResponse = await request(app.getHttpServer())
@@ -217,12 +216,9 @@ describe('EnsemblesController (e2e)', () => {
         description: 'This is a original ensemble',
         genre: ['Goofy'],
       };
-      const response = await request(app.getHttpServer())
-        .post('/ensembles')
-        .send(ensemble)
-        .expect(201);
+      const response = await ensembleService.createEnsemble(ensemble);
 
-      createdEnsemble = response.body._id;
+      createdEnsemble = response._id;
     });
 
     it('should update only the name of the ensemble', async () => {
