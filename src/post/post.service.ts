@@ -45,7 +45,7 @@ export class PostService {
         { $set: updatePostDto },
         { new: true },
       );
-      console.log(updatedpost);
+      // console.log(updatedpost);
       return updatedpost;
     } catch (error) {
       throw new InternalServerErrorException(error);
@@ -61,5 +61,10 @@ export class PostService {
     } catch (error) {
       console.log('Error deleting the post', error);
     }
+  }
+
+  //function for testing purposes
+  async deleteMany(): Promise<void> {
+    await this.postModel.deleteMany();
   }
 }
