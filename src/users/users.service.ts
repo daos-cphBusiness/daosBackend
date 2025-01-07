@@ -209,16 +209,16 @@ export class UsersService {
       // Case-insensitive and partial matchsearch
       filter.username = { $regex: search.username, $options: 'i' };
     }
-    if (search.instrument) {
-      filter.instrument = {
-        $elemMatch: {
-          $or: [
-            { name: { $regex: search.instrument, $options: 'i' } },
-            { genre: { $regex: search.instrument, $options: 'i' } },
-          ],
-        },
-      };
-    }
+    // if (search.instrument) {
+    //   filter.instrument = {
+    //     $elemMatch: {
+    //       $or: [
+    //         { name: { $regex: search.instrument, $options: 'i' } },
+    //         { genre: { $regex: search.instrument, $options: 'i' } },
+    //       ],
+    //     },
+    //   };
+    // }
     return this.userModel.find(filter).exec();
   }
 
