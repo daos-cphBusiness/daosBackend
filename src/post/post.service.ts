@@ -63,6 +63,9 @@ export class PostService {
     }
   }
 
+  findAllPosts() {
+    return this.postModel.find().populate('user');
+  }
   //function for testing purposes
   async deleteMany(): Promise<void> {
     await this.postModel.deleteMany();

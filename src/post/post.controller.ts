@@ -58,6 +58,18 @@ export class PostController {
   }
 
   @HttpCode(HttpStatus.OK)
+  @Get()
+  async getAllPosts() {
+    // console.log(req);
+    try {
+      return this.postService.findAllPosts();
+    } catch (error) {
+      console.log('oops', error);
+      throw new InternalServerErrorException(error);
+    }
+  }
+
+  @HttpCode(HttpStatus.OK)
   @Patch(':id')
   update(@Param('id') id: string, @Body() updatePostDto: UpdatePostDto) {
     return this.postService.update(id, updatePostDto);
